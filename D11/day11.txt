@@ -1,0 +1,88 @@
+Create Operation
+db.Books.insertMany([
+  {
+    title: "The Shadow of the Wind",
+    author: "Carlos Ruiz Zafón",
+    genre: "Historical Fiction",
+    publishedYear: 2001
+  },
+  {
+    title: "The Night Circus",
+    author: "Erin Morgenstern",
+    genre: "Fantasy",
+    publishedYear: 2011
+  },
+  {
+    title: "Station Eleven",
+    author: "Emily St. John Mandel",
+    genre: "Dystopian",
+    publishedYear: 2014
+  },
+  {
+    title: "The Song of Achilles",
+    author: "Madeline Miller",
+    genre: "Mythology",
+    publishedYear: 2011
+  },
+  {
+    title: "The House of the Spirits",
+    author: "Isabel Allende",
+    genre: "Magical Realism",
+    publishedYear: 1982
+  },
+  {
+    title: "A Man Called Ove",
+    author: "Fredrik Backman",
+    genre: "Contemporary Fiction",
+    publishedYear: 2012
+  },
+  {
+    title: "The Bone Clocks",
+    author: "David Mitchell",
+    genre: "Science Fiction",
+    publishedYear: 2014
+  },
+  {
+    title: "The Wind-Up Bird Chronicle",
+    author: "Haruki Murakami",
+    genre: "Magical Realism",
+    publishedYear: 1995
+  },
+  {
+    title: "The Left Hand of Darkness",
+    author: "Ursula K. Le Guin",
+    genre: "Science Fiction",
+    publishedYear: 1969
+  },
+  {
+    title: "Cloud Atlas",
+    author: "David Mitchell",
+    genre: "Science Fiction",
+    publishedYear: 2004
+  }
+])
+
+2. Read Operation 
+    - Find all db.Books.find()
+    - Find book named "The Shadow of the Wind" db.Books.findOne({ title: "The Shadow of the Wind" })
+    - Find author "Carlos Ruiz Zafón" db.Books.findOne({ author: "Carlos Ruiz Zafón" })
+
+3. Update Operation
+    - Update "The Night Circus" and set genre to "Romantic Fantasy" db.Books.updateOne(
+  { title: "The Night Circus" }, 
+  { $set: { genre: "Romantic Fantasy" } } 
+)
+
+    - Update publishedYear of "The Shadow of the Wind" and set to 2004
+    db.Books.updateOne(
+  { title: "The Shadow of the Wind" }, 
+  { $set: { publishedYear: 2004 } } 
+)
+
+4. Delete Operation
+    - Delete Book named "The Night Circus" 
+    db.Books.deleteOne({ title: "The Night Circus" })
+
+5. Re-read data from the Books collection
+db.Books.countDocuments()
+Result: 9
