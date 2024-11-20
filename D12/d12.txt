@@ -1,0 +1,364 @@
+Step 3
+
+1. db.courses.find({ category: ObjectId("673ddbbc1112e2b5e1195034") });
+
+{
+  _id: ObjectId('673ddcf847fa0a7f782b5224'),
+  title: 'Introduction to MongoDB',
+  description: 'Learn the basics of MongoDB.',
+  category: ObjectId('673ddbbc1112e2b5e1195034'),
+  instructor: ObjectId('673ddbded5fe3f25de6091b7'),
+  students: [
+    ObjectId('673ddc00ea3ea1e553df1bcc'),
+    ObjectId('673ddc00ea3ea1e553df1bcd')
+  ],
+  reviews: [
+    {
+      rating: 5,
+      comment: 'Great course!',
+      student: ObjectId('673ddc00ea3ea1e553df1bcd')
+    },
+    {
+      rating: 4,
+      comment: 'Very informative.',
+      student: ObjectId('673ddc00ea3ea1e553df1bcd')
+    }
+  ]
+}
+
+2. db.courses.find(
+  { title: "Introduction to MongoDB" },
+  { students: 1, _id: 0 }
+);
+
+{
+  students: [
+    ObjectId('673ddc00ea3ea1e553df1bcc'),
+    ObjectId('673ddc00ea3ea1e553df1bcd')
+  ]
+}
+
+3. db.courses.aggregate([
+  {
+    $lookup: {
+      from: "categories",
+      localField: "category",
+      foreignField: "_id",
+      as: "category_details"
+    }
+  },
+  {
+    $lookup: {
+      from: "instructors",
+      localField: "instructor",
+      foreignField: "_id",
+      as: "instructor_details"
+    }
+  }
+]);
+
+{
+  _id: ObjectId('673ddcf847fa0a7f782b5224'),
+  title: 'Introduction to MongoDB',
+  description: 'Learn the basics of MongoDB.',
+  category: ObjectId('673ddbbc1112e2b5e1195034'),
+  instructor: ObjectId('673ddbded5fe3f25de6091b7'),
+  students: [
+    ObjectId('673ddc00ea3ea1e553df1bcc'),
+    ObjectId('673ddc00ea3ea1e553df1bcd')
+  ],
+  reviews: [
+    {
+      rating: 5,
+      comment: 'Great course!',
+      student: ObjectId('673ddc00ea3ea1e553df1bcd')
+    },
+    {
+      rating: 4,
+      comment: 'Very informative.',
+      student: ObjectId('673ddc00ea3ea1e553df1bcd')
+    }
+  ],
+  category_details: [
+    {
+      _id: ObjectId('673ddbbc1112e2b5e1195034'),
+      name: 'Programming'
+    }
+  ],
+}
+
+{
+  _id: ObjectId('673ddcf847fa0a7f782b5225'),
+  title: 'Data Science with Python',
+  description: 'A comprehensive guide to data science using Python.',
+  category: ObjectId('673ddbbc1112e2b5e1195035'),
+  instructor: ObjectId('673ddbded5fe3f25de6091b8'),
+  students: [
+    ObjectId('673ddc00ea3ea1e553df1bce')
+  ],
+  reviews: [
+    {
+      rating: 4,
+      comment: 'Good introduction.',
+      student: ObjectId('673ddc00ea3ea1e553df1bce')
+    }
+  ],
+  category_details: [
+    {
+      _id: ObjectId('673ddbbc1112e2b5e1195035'),
+      name: 'Data Science'
+    }
+  ],
+  instructor_details: [
+    {
+      _id: ObjectId('673ddbded5fe3f25de6091b8'),
+      name: 'Jane Doe',
+      email: 'jane.doe@example.com',
+      teachingCourses: []
+    }
+  ]
+}
+
+
+4. db.courses.aggregate([
+  { $match: { title: "Data Science with Python" } },
+  { $unwind: "$reviews" },
+  {
+    $lookup: {
+      from: "students",
+      localField: "reviews.student",
+      foreignField: "_id",
+      as: "student_details"
+    }
+  }
+]);
+
+
+{
+  _id: ObjectId('673ddcf847fa0a7f782b5225'),
+  title: 'Data Science with Python',
+  description: 'A comprehensive guide to data science using Python.',
+  category: ObjectId('673ddbbc1112e2b5e1195035'),
+  instructor: ObjectId('673ddbded5fe3f25de6091b8'),
+  students: [
+    ObjectId('673ddc00ea3ea1e553df1bce')
+  ],
+  reviews: {
+    rating: 4,
+    comment: 'Good introduction.',
+    student: ObjectId('673ddc00ea3ea1e553df1bce')
+  },
+  student_details: [
+    {
+      _id: ObjectId('673ddc00ea3ea1e553df1bce'),
+      name: 'Charlie White',
+      email: 'charlie.w@example.com',
+      enrolledCourses: []
+    }
+  ]
+}
+
+
+5. db.courses.aggregate([
+  { $unwind: "$reviews" },
+  {
+    $group: {
+      _id: "$title",
+      averageRating: { $avg: "$reviews.rating" }
+    }
+  }
+]);
+
+{
+  _id: 'Introduction to MongoDB',
+  averageRating: 4.5
+}
+
+{
+  _id: 'Data Science with Python',
+  averageRating: 4
+}
+
+6.db.instructors.aggregate([
+  { $match: { name: "Jane Doe" } },
+  {
+    $lookup: {
+      from: "courses",
+      localField: "_id",
+      foreignField: "instructor",
+      as: "courses"
+    }
+  },
+  { $project: { name: 1, courses: 1 } }
+]);
+
+
+{
+  _id: ObjectId('673ddbded5fe3f25de6091b8'),
+  name: 'Jane Doe',
+  courses: [
+    {
+      _id: ObjectId('673ddcf847fa0a7f782b5225'),
+      title: 'Data Science with Python',
+      description: 'A comprehensive guide to data science using Python.',
+      category: ObjectId('673ddbbc1112e2b5e1195035'),
+      instructor: ObjectId('673ddbded5fe3f25de6091b8'),
+      students: [
+        ObjectId('673ddc00ea3ea1e553df1bce')
+      ],
+      reviews: [
+        {
+          rating: 4,
+          comment: 'Good introduction.',
+          student: ObjectId('673ddc00ea3ea1e553df1bce')
+        }
+      ]
+    }
+  ]
+}
+
+
+7.db.courses.aggregate([
+  {
+    $group: {
+      _id: "$category",
+      courseCount: { $sum: 1 }
+    }
+  }
+]);
+
+
+{
+  _id: ObjectId('673ddbbc1112e2b5e1195034'),
+  courseCount: 1
+}
+
+{
+  _id: ObjectId('673ddbbc1112e2b5e1195035'),
+  courseCount: 1
+}
+
+8. db.courses.aggregate([
+  { $match: { title: "Introduction to MongoDB" } },
+  { $unwind: "$reviews" },
+  {
+    $lookup: {
+      from: "students",
+      localField: "reviews.student",
+      foreignField: "_id",
+      as: "student_details"
+    }
+  }
+]);
+
+
+{
+  _id: ObjectId('673ddcf847fa0a7f782b5224'),
+  title: 'Introduction to MongoDB',
+  description: 'Learn the basics of MongoDB.',
+  category: ObjectId('673ddbbc1112e2b5e1195034'),
+  instructor: ObjectId('673ddbded5fe3f25de6091b7'),
+  students: [
+    ObjectId('673ddc00ea3ea1e553df1bcc'),
+    ObjectId('673ddc00ea3ea1e553df1bcd')
+  ],
+  reviews: {
+    rating: 5,
+    comment: 'Great course!',
+    student: ObjectId('673ddc00ea3ea1e553df1bcd')
+  },
+  student_details: [
+    {
+      _id: ObjectId('673ddc00ea3ea1e553df1bcd'),
+      name: 'Bob Brown',
+      email: 'bob.b@example.com',
+      enrolledCourses: []
+    }
+  ]
+}
+
+
+{
+  _id: ObjectId('673ddcf847fa0a7f782b5224'),
+  title: 'Introduction to MongoDB',
+  description: 'Learn the basics of MongoDB.',
+  category: ObjectId('673ddbbc1112e2b5e1195034'),
+  instructor: ObjectId('673ddbded5fe3f25de6091b7'),
+  students: [
+    ObjectId('673ddc00ea3ea1e553df1bcc'),
+    ObjectId('673ddc00ea3ea1e553df1bcd')
+  ],
+  reviews: {
+    rating: 4,
+    comment: 'Very informative.',
+    student: ObjectId('673ddc00ea3ea1e553df1bcd')
+  },
+  student_details: [
+    {
+      _id: ObjectId('673ddc00ea3ea1e553df1bcd'),
+      name: 'Bob Brown',
+      email: 'bob.b@example.com',
+      enrolledCourses: []
+    }
+  ]
+}
+
+9. db.courses.aggregate([
+  { $unwind: "$reviews" },
+  {
+    $group: {
+      _id: "$title",
+      averageRating: { $avg: "$reviews.rating" }
+    }
+  },
+  { $match: { averageRating: { $gt: 4 } } }
+]);
+
+
+{
+  _id: 'Introduction to MongoDB',
+  averageRating: 4.5
+}
+
+10. db.instructors.aggregate([
+  { $match: { name: "John Smith" } },
+  {
+    $lookup: {
+      from: "courses",
+      localField: "_id",
+      foreignField: "instructor",
+      as: "courses"
+    }
+  },
+  { $unwind: "$courses" },
+  {
+    $lookup: {
+      from: "students",
+      localField: "courses.students",
+      foreignField: "_id",
+      as: "students"
+    }
+  },
+  { $project: { name: 1, students: 1 } }
+]);
+
+
+
+{
+  _id: ObjectId('673ddbded5fe3f25de6091b7'),
+  name: 'John Smith',
+  students: [
+    {
+      _id: ObjectId('673ddc00ea3ea1e553df1bcc'),
+      name: 'Alice Johnson',
+      email: 'alice.j@example.com',
+      enrolledCourses: []
+    },
+    {
+      _id: ObjectId('673ddc00ea3ea1e553df1bcd'),
+      name: 'Bob Brown',
+      email: 'bob.b@example.com',
+      enrolledCourses: []
+    }
+  ]
+}

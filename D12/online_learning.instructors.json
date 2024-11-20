@@ -1,0 +1,16 @@
+[{
+  "_id": {
+    "$oid": "673ddbded5fe3f25de6091b7"
+  },
+  "name": "John Smith",
+  "email": "john.smith@example.com",
+  "teachingCourses": []
+},
+{
+  "_id": {
+    "$oid": "673ddbded5fe3f25de6091b8"
+  },
+  "name": "Jane Doe",
+  "email": "jane.doe@example.com",
+  "teachingCourses": []
+}]
