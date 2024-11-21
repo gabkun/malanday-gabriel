@@ -1,0 +1,15 @@
+{
+  "name": "express-project",
+  "version": "1.0.0",
+  "description": "An Express app with ES Modules",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^8.8.2"
+  }
+}
