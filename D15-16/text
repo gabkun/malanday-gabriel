@@ -1,0 +1,9 @@
+    const updatedBlog = await Blog.findByIdAndUpdate(
+        id,
+        { title, content },
+        { new: true, runValidators: true }
+      );
+      if (!updatedBlog) {
+        return res.status(404).json({ message: "Blog not found." });
+      }
+    res.status(200).json({ message: "Blog updated successfully.", data: updatedBlog });
