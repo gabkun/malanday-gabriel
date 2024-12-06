@@ -4,6 +4,8 @@ import connectDB from './db.js';
 import authRoutes from './routes/authRoutes.js';
 import blogRoutes from './routes/blogRoutes.js'
 
+//cors
+
 dotenv.config();
 connectDB();
 
@@ -19,6 +21,9 @@ const PORT = process.env.PORT || 4000;
 app.get("/", (req, res) => {
   res.send("Hello, MongoDB Atlas!");
 });
+
+//cors
+
 
 // Start the server
 app.listen(PORT, () => {
